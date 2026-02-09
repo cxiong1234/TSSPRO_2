@@ -1,0 +1,28 @@
+data:
+  root: 'data/md17'
+  molecule_name: 'qm_region'
+  down_sample_every: 10
+  with_h: true
+  span: 30 ## the length of the trajectory
+  mode: 'test'
+  return_index: true
+  project: false  # false for conditional generation
+
+wandb:
+  wandb_usr: 'YOUR_USER_NAME'
+  no_wandb: true
+  project: 'traj_qm_region'
+
+eval:
+  train_exp_name: 'md17_qm_GeoTDM_cond'  # The name of the training exp (must match the training config)
+  model_ckpt: 'best'  # or 'last' or a specific epoch number like '500'
+  eval_exp_name: null  # Default: train_exp_name + '_eval'
+  output_base_path: 'outputs/'  # Should be the same as training
+  cond_mask: null  # Default: The same as training (will use [[0, 10]])
+  cond: true  # use true if conditional and false if uncond
+  seed: 2000
+  model: 'GeoTDM'
+  batch_size: 128
+  sampling_timesteps: 100  # Default: The same as training
+
+

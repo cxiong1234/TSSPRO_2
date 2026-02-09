@@ -1,0 +1,63 @@
+data:
+  train:
+    root: 'data/md17'
+    molecule_name: 'qm_region'
+    down_sample_every: 10
+    with_h: true
+    span: 30
+    mode: 'train'
+
+  val:
+    root: 'data/md17'
+    molecule_name: 'qm_region'
+    down_sample_every: 10
+    with_h: true
+    span: 30
+    mode: 'val'
+    force_length: 256
+
+  test:
+    root: 'data/md17'
+    molecule_name: 'qm_region'
+    down_sample_every: 10
+    with_h: true
+    span: 30
+    mode: 'test'
+    return_index: true
+
+wandb:
+  wandb_usr: 'YOUR_USER_NAME'
+  no_wandb: true
+  project: 'traj_qm_region'
+
+denoise_model:
+  n_layers: 6
+  node_dim: 48
+  edge_dim: 4
+  hidden_dim: 128
+  time_emb_dim: 32
+  act_fn: 'silu'
+  learn_ref_frame: true
+  n_layers_ref: 2
+  num_w: 20  # span - len(cond_mask): 30 - 10 = 20
+
+diffusion:
+  beta_schedule_name: 'linear'
+  num_timesteps: 100
+
+train:
+  exp_name: 'md17_qm_GeoTDM_cond'
+  output_base_path: 'outputs/'
+  seed: 100
+  cond_mask: [[0, 10]]
+  num_epochs: 5000
+  batch_size: 64  # Reduced from 128 due to larger system (164 atoms vs 21)
+  eval_batch_size: 128
+  lr: 0.0001
+  save_model: true
+  save_every_epoch: 500
+  eval_every_epoch: 100
+  log_every_step: 20
+  final_test: true
+  final_test_ckpt: 'best'
+  K: 5

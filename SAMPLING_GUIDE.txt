@@ -1,0 +1,74 @@
+"""
+Quick guide to using the sampled MD17 aspirin trajectories.
+
+LOCATION:
+  outputs/md17_aspirin_GeoTDM_cond_eval/samples.pkl
+
+FORMAT:
+  - Python pickle file containing a list of PyTorch Geometric Data objects
+  - Each Data object represents one batch of sampled trajectories
+
+HOW TO LOAD:
+  ```python
+  import pickle
+  
+  with open('outputs/md17_aspirin_GeoTDM_cond_eval/samples.pkl', 'rb') as f:
+      all_data = pickle.load(f)
+  
+  # Get first batch
+  batch = all_data[0]
+  
+  # Access trajectories
+  x_true = batch.x        # Ground truth: [N_atoms, 3, T_timesteps]
+  x_pred = batch.x_pred   # Sampled trajectory: [N_atoms, 3, T_timesteps]
+  ```
+
+DATA STRUCTURE:
+  Each batch contains:
+    - x:          Ground truth trajectory [N_atoms, 3, T]
+    - x_pred:     Sampled/predicted trajectory [N_atoms, 3, T]
+    - h:          Node features (atom types encoded)
+    - edge_index: Graph connectivity
+    - edge_attr:  Edge attributes
+    - batch:      Batch assignment for each atom
+    - system_id:  Trajectory ID in the dataset
+
+EXAMPLE USAGE:
+  ```python
+  # Activate conda environment first
+  conda activate geoTDM
+  
+  # Then run Python
+  import pickle
+  import torch
+  
+  # Load samples
+  with open('outputs/md17_aspirin_GeoTDM_cond_eval/samples.pkl', 'rb') as f:
+      all_data = pickle.load(f)
+  
+  print(f"Number of batches: {len(all_data)}")
+  
+  # Inspect first batch
+  batch = all_data[0]
+  print(f"Ground truth shape: {batch.x.shape}")
+  print(f"Predicted shape: {batch.x_pred.shape}")
+  
+  # Calculate RMSD
+  diff = batch.x - batch.x_pred
+  rmsd = torch.sqrt((diff ** 2).mean())
+  print(f"RMSD: {rmsd:.4f} Angstroms")
+  
+  # Save to numpy for further analysis
+  import numpy as np
+  np.save('sampled_trajectory.npy', batch.x_pred.numpy())
+  ```
+
+TO VISUALIZE:
+  You can convert to XYZ format and visualize with VMD, PyMOL, or Ovito.
+  See inspect_samples.py for conversion code.
+
+NEXT STEPS:
+  1. Activate conda: conda activate geoTDM
+  2. Run: python inspect_samples.py outputs/md17_aspirin_GeoTDM_cond_eval/samples.pkl
+  3. Or write your own analysis script using the examples above
+"""
